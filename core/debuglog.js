@@ -1,6 +1,3 @@
-// Copyright (c) xiaoyouxingkong, All Rights Reserved.
-// author: rapidhere@gmail.com
-
 // we only plan to have a debug logger
 'use strict';
 

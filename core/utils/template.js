@@ -1,6 +1,3 @@
-// Copyright (c) xiaoyouxingkong, All Rights Reserved.
-// author: rapidhere@gmail.com
-
 // some helper for render
 'use strict';
 

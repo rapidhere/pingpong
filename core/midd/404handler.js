@@ -1,7 +1,3 @@
-
-// Copyright (c) xiaoyouxingkong, All Rights Reserved.
-// author: rapidhere@gmail.com
-
 'use strict';
 
 var render = require('../utils/template').render;

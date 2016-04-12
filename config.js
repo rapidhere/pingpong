@@ -1,6 +1,3 @@
-// Copyright (c) xiaoyouxingkong, All Rights Reserved.
-// author: rapidhere@gmail.com
-
 // config of this website goes here
 'use strict';
 

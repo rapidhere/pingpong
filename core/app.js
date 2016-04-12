@@ -1,6 +1,3 @@
-// Copyright (c) xiaoyouxingkong, All Rights Reserved.
-// author: rapidhere@gmail.com
-
 'use strict';
 
 var express = require('express');
