@@ -18,16 +18,18 @@
   // require WebRTC support
   pp.utils.listLocalIPs = function listLocalIPs(conf) {
     var RTCPeerConnection = window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+    var def = $.Deferred();
 
     if(! RTCPeerConnection) {
-      console.error("Web RTC is not supported in this client");
-      return;
+      return def.reject("Web RTC is not supported in this client");
     }
 
     conf = conf || {iceServers: []};
 
     var pc = new RTCPeerConnection(conf);
     pc.createDataChannel('', {reliable: false});
+    var ips = [];
+    var lastIpLength = 0;
 
     pc.onicecandidate = function(e) {
       if(! e.candidate) {
@@ -39,9 +41,9 @@
 
       candi.split(' ').forEach(function(part) {
         if(part.match(PATT_IPV4)) {
-          console.log(part);
+          ips.push(part);
         } else if(part.match(PATT_IPV6)) {
-          console.log(part);
+          ips.push(part);
         }
       });
     };
@@ -49,7 +51,22 @@
     pc.createOffer(function(offerDesc) {
       pc.setLocalDescription(offerDesc);
     }, function(e) {
-      console.warn("offer failed", e);
+      def.reject('offer failed ' + e);
+      if(_loop)
+        clearInterval(_loop);
     });
+
+    // loop counter
+    var _loop = setInterval(function() {
+      if(ips.length == lastIpLength) {
+        def.resolve(ips);
+        clearInterval(_loop);
+        return ;
+      }
+
+      lastIpLength = ips.length;
+    }, 1000);
+
+    return def.promise();
   };
 })(jQuery);
