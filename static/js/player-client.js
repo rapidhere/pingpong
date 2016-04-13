@@ -25,6 +25,7 @@ var ipV6Exp = /^[0-9a-f]{0,4}(:[0-9a-f]{0,4}){7}$/;
         $scanNotification.fadeIn(1000);
     }
 
+    //TODO: Invoke this after client connected
     function hideLayers() {
         var $shader = $('#shader');
         var $layerWrapper = $('#layerWrapper');
@@ -55,20 +56,23 @@ var ipV6Exp = /^[0-9a-f]{0,4}(:[0-9a-f]{0,4}){7}$/;
     }
 // here goes fallbacks on web rtc not support
     else {
-        // TODO: fallbacks
-        var ipAddress = null;
-        while (ipAddress == null) {
-            ipAddress = prompt('Cannot Resolve your PC\'s IP address, Please input manually');
-            ipAddress = ipAddress.trim();
-            if ((!ipV4Exp.test(ipAddress)) && (!ipV6Exp.test(ipAddress))) {
-                ipAddress == null;
-            }
-        }
-        var ips = [];
-        ips.push(ipAddress);
-        console.log(ips);
         setTimeout(function () {
-            showQRCode(JSON.stringify(ips));
+            var ipAddress = null;
+            while (!ipAddress) {
+                ipAddress = prompt('Cannot Resolve your PC\'s IP address, Please input manually');
+                if (ipAddress) {
+                    ipAddress = ipAddress.trim();
+                    if ((!ipV4Exp.test(ipAddress)) && (!ipV6Exp.test(ipAddress))) {
+                        ipAddress == null;
+                    }
+                }
+            }
+            var ips = [];
+            ips.push(ipAddress);
+            console.log(ips);
+            setTimeout(function () {
+                showQRCode(JSON.stringify(ips));
+            }, 0);
         }, 0);
     }
 
