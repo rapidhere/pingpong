@@ -21,8 +21,8 @@ var ipV6Exp = /^[0-9a-f]{0,4}(:[0-9a-f]{0,4}){7}$/;
             text: "http://172.16.66.100:8888/mobile-client?ips=" + ipAddress
         });
         $loadingContent.hide(1000);
-        $qrcodeArea.show(1000);
-        $scanNotification.show(1000);
+        $qrcodeArea.fadeIn(1000);
+        $scanNotification.fadeIn(1000);
     }
 
     function hideLayers() {
@@ -30,13 +30,13 @@ var ipV6Exp = /^[0-9a-f]{0,4}(:[0-9a-f]{0,4}){7}$/;
         var $layerWrapper = $('#layerWrapper');
         var $scanNotification = $('#scanNotification');
 
-        $scanNotification.hide(200);
+        $scanNotification.fadeOut(200);
         $scanNotification.html("Mobile Device Connected!");
-        $scanNotification.show(800);
+        $scanNotification.fadeIn(800);
 
         setTimeout(function () {
-            $shader.hide(1000);
-            $layerWrapper.hide(1000);
+            $shader.fadeOut(1000);
+            $layerWrapper.fadeOut(1000);
         }, 2000)
     }
 
