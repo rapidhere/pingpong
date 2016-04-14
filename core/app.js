@@ -20,9 +20,6 @@ app.set('view cache', false);
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
-// set websocket
-require('express-ws')(app);
-
 // discover pages
 fs.readdir(config.pagesRoot, function(err, files) {
   if(err) {
