@@ -1,77 +1,80 @@
+(function ($, pp) {
 'use strict';
 
 var ipV4Exp = /^\d{1,3}(.\d{1,3}){3}$/;
 var ipV6Exp = /^[0-9a-f]{0,4}(:[0-9a-f]{0,4}){7}$/;
 
-(function ($, pp) {
+var id;
+var peer;
 
-    function showQRCode(ipAddress) {
-        var $qrcodeArea = $('#qrcodeArea');
-        var $scanNotification = $('#scanNotification');
-        var $loadingContent = $('#centerPopup').find('p');
-        // draw qrcode
-        $qrcodeArea.qrcode({
-            render: "canvas",
-            width: 400,
-            height: 400,
-            typeNumber: -1,
-            correctLevel: 2,
-            background: "#ffffff",
-            foreground: "#000000",
-            text: "http://172.16.66.100:8888/mobile-client?ips=" + ipAddress
-        });
-        $loadingContent.hide(1000);
-        $qrcodeArea.fadeIn(1000);
-        $scanNotification.fadeIn(1000);
-    }
+function showQRCode(peerId) {
+  var $qrcodeArea = $('#qrcodeArea');
+  var $scanNotification = $('#scanNotification');
+  var $loadingContent = $('#centerPopup').find('p');
+  var uri = 'http://' +
+    pp.config.host + ':' +
+    pp.config.port +
+    pp.config.mobileClientPath +
+    '?peer_id=' + encodeURIComponent(peerId);
 
-    function showIPs(ips) {
-        setTimeout(function() {
-            showQRCode(ips.join(','));
-        }, 0);
-    }
+  console.log(uri);
 
-    //TODO: Invoke this after client connected
-    function hideLayers() {
-        var $shader = $('#shader');
-        var $layerWrapper = $('#layerWrapper');
-        var $scanNotification = $('#scanNotification');
+  // draw qrcode
+  $qrcodeArea.qrcode({
+    render: 'canvas',
+    width: 400,
+    height: 400,
+    typeNumber: -1,
+    correctLevel: 2,
+    background: '#ffffff',
+    foreground: '#000000',
+    text: uri,
+  });
+  $loadingContent.hide(1000);
+  $qrcodeArea.fadeIn(1000);
+  $scanNotification.fadeIn(1000);
+}
 
-        $scanNotification.fadeOut(200);
-        $scanNotification.html("Mobile Device Connected!");
-        $scanNotification.fadeIn(800);
+//TODO: Invoke this after client connected
+function hideLayers() {
+  var $shader = $('#shader');
+  var $layerWrapper = $('#layerWrapper');
+  var $scanNotification = $('#scanNotification');
 
-        setTimeout(function () {
-            $shader.fadeOut(1000);
-            $layerWrapper.fadeOut(1000);
-        }, 2000)
-    }
+  $scanNotification.fadeOut(200);
+  $scanNotification.html("Mobile Device Connected!");
+  $scanNotification.fadeIn(800);
 
-// try to get ips
-    if (pp.utils.hasWebRTC()) {
-        pp.utils.listLocalIPs()
-            .done(showIPs)
-            .fail(function (err) {
-                console.log(err);
-            });
-    }
-// here goes fallbacks on web rtc not support
-    else {
-        setTimeout(function () {
-            var ipAddress = null;
-            while (!ipAddress) {
-                ipAddress = prompt('Cannot Resolve your PC\'s IP address, Please input manually');
-                if (ipAddress) {
-                    ipAddress = ipAddress.trim();
-                    if ((!ipV4Exp.test(ipAddress)) && (!ipV6Exp.test(ipAddress))) {
-                        ipAddress == null;
-                    }
-                }
-            }
-            var ips = [];
-            ips.push(ipAddress);
-            showIPs(ips);
-        }, 0);
-    }
+  setTimeout(function () {
+      $shader.fadeOut(1000);
+      $layerWrapper.fadeOut(1000);
+  }, 2000)
+}
+
+function load(){
+  id = pp.utils.generateId();
+  peer = pp.peer.createPeer(id);
+
+  showQRCode(id);
+
+  peer.on('connection', function(conn) {
+    hideLayers();
+
+    conn.on('data', function(data) {
+      // TODO: data
+      console.log(data);
+    });
+  });
+}
+
+$(function() {
+  if (pp.utils.hasWebRTC()) {
+    load();
+  }
+  // here goes fallbacks on web rtc not support
+  else {
+    // TODO
+  }
+});
 
 })(jQuery, window.pp);
