@@ -20,3 +20,9 @@ exports.pagesRoot = path.join(exports.projectRoot, 'pages');
 
 // listen port
 exports.port = 8888;
+
+// host
+exports.host = '10.94.12.52';
+
+// peer path
+exports.peerPath = '/peer';

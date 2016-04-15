@@ -5,6 +5,7 @@ var config = require('../config');
 var debuglog = require('./debuglog');
 var fs = require('fs');
 var path = require('path');
+var ExpressPeerServer = require('peer').ExpressPeerServer;
 
 // the web express app
 var app = global.app = express();
@@ -45,6 +46,9 @@ fs.readdir(config.pagesRoot, function(err, files) {
 
 exports.start = function() {
   var server = app.listen(config.port, '0.0.0.0');
+
+  // set peer server
+  app.use(config.peerPath, ExpressPeerServer(server, {}));
 
   // only start once
   exports.start = function(){};
