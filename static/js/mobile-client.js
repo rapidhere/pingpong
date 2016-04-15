@@ -1,16 +1,39 @@
-(function($) {
+(function($, pp){
 
 'use strict';
 
+var $state;
+var id;
+var peer, conn, peerId;
+
 $(function() {
-  // load websocket
-  var ws = new WebSocket('ws://10.141.246.71:8888/gesture/update');
+  $state = $('#state');
 
-  ws.onopen = function() {
-    console.log('Connection connected!');
-    $('#state').text('已经连接到服务器');
-  };
+  if(pp.utils.hasWebRTC()) {
+    load();
+  } else {
+    $state = $('你当前的浏览器不支持WebRTC');
+  }
+});
 
+function setState(text) {
+  $state.html(text);
+}
+
+function load() {
+  peerId = pp.uri.getQueries().peer_id;
+
+  id = pp.utils.generateId();
+  peer = pp.peer.createPeer(id);
+
+  conn = peer.connect(peerId);
+  conn.on('open', function() {
+    setState('已连接到player: ' + peerId);
+    process();
+  });
+}
+
+function process() {
   // data
   var alpha, beta, gamma;
   var alphaRate, betaRate, gammaRate;
@@ -31,7 +54,35 @@ $(function() {
     rotateInited = false;
   });
 
-  var detect = function() {
+  $(window).on('deviceorientation', function(e) {
+    var o = e.originalEvent;
+
+    alpha = o.alpha;
+    beta = o.beta;
+    gamma = o.gamma;
+
+    if(! rotateInited) {
+      rotateInited = true;
+      initAlpha = alpha;
+      initGamma = gamma;
+    }
+  });
+
+  $(window).on('devicemotion', function(e) {
+    var m = e.originalEvent;
+
+    ax = m.acceleration.x;
+    ay = m.acceleration.y;
+    az = m.acceleration.z;
+
+    alphaRate = m.rotationRate.alpha;
+    betaRate = m.rotationRate.beta;
+    gammaRate = m.rotationRate.gamma;
+
+    detect();
+  });
+
+  function detect() {
     if(Math.sqrt(az * az + ax * ax) < azEps)
       return;
 
@@ -61,42 +112,9 @@ $(function() {
       return ;
 
     gesture = _gesture;
-/*
-    if(gesture >= 0)
-      console.log('%c' + gesture + ': ' + cosa + ', ' + sina + ', ' + alphaRate + ', ' + az, 'background-color: yellow');
-    else
-      console.log('%c' + gesture + ': ' + cosa + ', ' + sina + ', ' + alphaRate + ', ' + az, 'background-color: red');
-*/
-    ws.send(gesture);
-  };
 
-  $(window).on('deviceorientation', function(e) {
-    var o = e.originalEvent;
+    conn.send(gesture);
+  }
+}
 
-    alpha = o.alpha;
-    beta = o.beta;
-    gamma = o.gamma;
-
-    if(! rotateInited) {
-      rotateInited = true;
-      initAlpha = alpha;
-      initGamma = gamma;
-    }
-  });
-
-  $(window).on('devicemotion', function(e) {
-    var m = e.originalEvent;
-
-    ax = m.acceleration.x;
-    ay = m.acceleration.y;
-    az = m.acceleration.z;
-
-    alphaRate = m.rotationRate.alpha;
-    betaRate = m.rotationRate.beta;
-    gammaRate = m.rotationRate.gamma;
-
-    detect();
-  });
-});
-
-})(jQuery);
+})(jQuery, window.pp);
