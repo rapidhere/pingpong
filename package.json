@@ -6,7 +6,6 @@
   "dependencies": {
     "ejs": "^2.3.4",
     "express": "^4.13.3",
-    "express-ws": "^0.2.6",
     "underscore": "^1.8.3"
   },
   "scripts": {
