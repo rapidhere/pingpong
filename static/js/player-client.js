@@ -25,6 +25,12 @@ var ipV6Exp = /^[0-9a-f]{0,4}(:[0-9a-f]{0,4}){7}$/;
         $scanNotification.fadeIn(1000);
     }
 
+    function showIPs(ips) {
+        setTimeout(function() {
+            showQRCode(ips.join(','));
+        }, 0);
+    }
+
     //TODO: Invoke this after client connected
     function hideLayers() {
         var $shader = $('#shader');
@@ -44,12 +50,7 @@ var ipV6Exp = /^[0-9a-f]{0,4}(:[0-9a-f]{0,4}){7}$/;
 // try to get ips
     if (pp.utils.hasWebRTC()) {
         pp.utils.listLocalIPs()
-            .done(function (ips) {
-                console.log(ips);
-                setTimeout(function () {
-                    showQRCode(JSON.stringify(ips));
-                }, 0);
-            })
+            .done(showIPs)
             .fail(function (err) {
                 console.log(err);
             });
@@ -69,10 +70,7 @@ var ipV6Exp = /^[0-9a-f]{0,4}(:[0-9a-f]{0,4}){7}$/;
             }
             var ips = [];
             ips.push(ipAddress);
-            console.log(ips);
-            setTimeout(function () {
-                showQRCode(JSON.stringify(ips));
-            }, 0);
+            showIPs(ips);
         }, 0);
     }
 
