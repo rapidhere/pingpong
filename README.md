@@ -21,7 +21,7 @@ Configureation
 --
 
 * Backend: edit `config.js`
-* Frontend: you can access /config.js and get the config file. you can edit the content in pages/main/views.js
+* Frontend: you can access `/config.js` and get the config file. you can edit the content in `pages/main/views.js`
 
 
 Start Server
