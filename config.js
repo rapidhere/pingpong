@@ -22,7 +22,7 @@ exports.pagesRoot = path.join(exports.projectRoot, 'pages');
 exports.port = 8888;
 
 // host
-exports.host = '172.16.66.100';
+exports.host = '10.94.12.52';
 
 // peer path
 exports.peerPath = '/peer';

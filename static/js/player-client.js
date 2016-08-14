@@ -35,6 +35,7 @@ function showQRCode(peerId) {
   $scanNotification.fadeIn(1000);
 }
 
+//TODO: Invoke this after client connected
 function hideLayers() {
   var $shader = $('#shader');
   var $layerWrapper = $('#layerWrapper');
@@ -58,11 +59,10 @@ function load(){
 
   peer.on('connection', function(conn) {
     hideLayers();
-    window.addEventListener('mousedown', doMouseDown, false);
 
     conn.on('data', function(data) {
       // TODO: data
-      reactToGesture(data);
+      console.log(data);
     });
   });
 }
